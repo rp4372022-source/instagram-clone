@@ -2,6 +2,8 @@ package com.meta.instagram.reel;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ReelService {
     private final ReelRepo reelRepo;
@@ -22,5 +24,9 @@ public class ReelService {
     }
     public Reel deleteReel(long id){
         return reelRepo.deleteByReelId(id);
+    }
+
+    public List<Reel> getAllReels() {
+        return reelRepo.findAll();
     }
 }
