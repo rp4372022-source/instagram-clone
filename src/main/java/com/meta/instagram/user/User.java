@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
@@ -16,10 +17,21 @@ import java.util.Date;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    private Long userId;
     private String userName;
     private String userPassword;
-    private int followersCount;
-    private int followingCount;
+    private Long followersCount;
+    private Long followingCount;
+    private String bio;
+
+    @CreationTimestamp  //Automatically sets the current date/time when saved
     private Date createdAt;
+
+    public User(String userName, String userPassword, Long followersCount, Long followingCount, String bio) {
+        this.userName = userName;
+        this.userPassword = userPassword;
+        this.followersCount = followersCount;
+        this.followingCount = followingCount;
+        this.bio = bio;
+    }
 }
