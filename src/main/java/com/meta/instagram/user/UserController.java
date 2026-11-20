@@ -11,7 +11,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    private UserService userService;
+
+    private final UserService userService;
 
     public UserController(UserService userService){
         this.userService = userService;
@@ -20,17 +21,32 @@ public class UserController {
     @PostMapping("/add")
     public ResponseEntity<HttpStatus> addUser(@RequestBody UserRegisterRequest userRegisterRequest){
         System.out.println(userRegisterRequest.toString());
-        userService.add(userRegisterRequest);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        try{
+            userService.add(userRegisterRequest);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<UserProfileResponse> getUserProfileResponse(@PathVariable long id){
-        return new ResponseEntity<>(userService.getUserProfile(id), HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(userService.getUserProfile(id), HttpStatus.OK);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/getallusers")
     public ResponseEntity<List<UserProfileResponse>> getAllUserProfiles(){
-        return new ResponseEntity<>(userService.getAll(),HttpStatus.OK);
+        try{
+            return new ResponseEntity<>(userService.getAll(), HttpStatus.OK);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
