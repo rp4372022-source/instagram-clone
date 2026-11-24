@@ -7,9 +7,8 @@ public record AddNewReelRequest(
     @NotNull(message = "name cannot be null")
     @NotBlank(message = "name cannot be blank")
     String userName,
-    @NotNull(message = "password cannot be blank")
-    @NotBlank(message = "password cannot be blank")
-    String password,
-    String bio
+    @NotNull(message = "caption cannot be blank")
+    @NotBlank(message = "caption cannot be blank")
+    String caption
 ) {
 }

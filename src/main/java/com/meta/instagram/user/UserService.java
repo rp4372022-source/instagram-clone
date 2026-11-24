@@ -75,4 +75,11 @@ public class UserService {
             throw new UserException("Id cannot be negative");
         }
     }
+
+    //method for reel
+    public User getReferenceByUsername(String userName){
+        return userRepo.findByUserName(userName).orElseThrow(
+                () -> new UserException("No user found with user name : "+userName)
+        );
+    }
 }

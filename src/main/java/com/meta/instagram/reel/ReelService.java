@@ -1,5 +1,8 @@
 package com.meta.instagram.reel;
 
+import com.meta.instagram.reel.dto.AddNewReelRequest;
+import com.meta.instagram.user.User;
+import com.meta.instagram.user.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -7,13 +10,25 @@ import java.util.List;
 @Service
 public class ReelService {
     private final ReelRepo reelRepo;
+    private final UserService userService;
 
-    ReelService(ReelRepo reelRepo){
+    ReelService(ReelRepo reelRepo,UserService userService){
         this.reelRepo = reelRepo;
+        this.userService = userService;
     }
 
     //CRUD
-    public void addReel(Reel reel){
+    public void addNewReel(AddNewReelRequest newReelRequest){
+        //preparing user for adding in reel
+        User user = userService.getReferenceByUsername(newReelRequest.userName());
+
+        //creating and saving reel
+        Reel reel = new Reel(
+                user,
+                newReelRequest.caption(),
+                "no-url",
+                0L
+        );
         reelRepo.save(reel);
     }
     public void updateReel(Reel reel){
