@@ -3,6 +3,7 @@ package com.meta.instagram.user;
 import com.meta.instagram.exception.UserException;
 import com.meta.instagram.user.dto.UserProfileResponse;
 import com.meta.instagram.user.dto.UserRegisterRequest;
+import com.meta.instagram.user.exception.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,6 +17,12 @@ public class UserService {
     }
 
     public void add(UserRegisterRequest userRegisterRequest){
+        //check if username already exist
+        boolean isAnyOne = userRepo.existsByUserName(userRegisterRequest.userName());
+        if(isAnyOne){
+            throw new UserException("Username already exists with name : "+userRegisterRequest.userName());
+        }
+
         User user = new User(
                 userRegisterRequest.userName(),
                 userRegisterRequest.userPassword(),
@@ -24,32 +31,19 @@ public class UserService {
                 userRegisterRequest.bio()
         );
 
-        //check if username already exist
-        boolean isAnyOne = userRepo.existsByUserName(user.getUserName());
-        if(isAnyOne){
-            throw new UserException("Username already exists with name : "+user.getUserName());
-        }
-
         //add user
         userRepo.save(user);
     }
 
-    public User get(Long id){
-        validate(id);
-        return userRepo.getUserByUserId(id);
-    }
-
-    public UserProfileResponse getUserProfile(Long id){
-        validate(id);
-        User user = userRepo.findById(id).orElse(null);
-
-        if(user == null){
-            throw new UserException("No user found with id: "+id);
-        }
-
+    public UserProfileResponse get(Long id){
+        User user = userRepo.findByUserId(id).orElseThrow(
+                () -> new UserNotFoundException("No user exist with id : "+id)
+        );
+        // if bio is empty
         return new UserProfileResponse(
+                user.getUserId(),
                 user.getUserName(),
-                user.getBio(),
+                (user.getBio().isEmpty()) ? "" : user.getBio(),//checks if user left field empty
                 user.getFollowingCount(),
                 user.getFollowersCount()
         );
@@ -58,6 +52,7 @@ public class UserService {
     public List<UserProfileResponse> getAll() {
         return userRepo.findAll().stream().
                 map(u -> new UserProfileResponse(
+                        u.getUserId(),
                         u.getUserName(),
                         u.getBio(),
                         u.getFollowingCount(),
@@ -66,20 +61,9 @@ public class UserService {
                 .toList();
     }
 
-    //validation method to verify id
-    private void validate(Long id){
-        if(id == null){
-            throw new UserException("Id cannot be null");
-        }
-        if(id < 0){
-            throw new UserException("Id cannot be negative");
-        }
-    }
-
     //method for reel
-    public User getReferenceByUsername(String userName){
-        return userRepo.findByUserName(userName).orElseThrow(
-                () -> new UserException("No user found with user name : "+userName)
-        );
+    public User getUserByUsername(String userName){
+        return userRepo.findByUserName(userName).orElseThrow( //orElse only work on Optional
+                () -> new UserException("No user found with name "+ userName));
     }
 }

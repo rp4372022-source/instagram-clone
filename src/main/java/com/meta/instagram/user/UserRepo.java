@@ -1,14 +1,15 @@
 package com.meta.instagram.user;
 
-import com.meta.instagram.user.dto.UserProfileResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    UserProfileResponse findByUserName(String name);
+    Optional<User> findByUserName(String name); //making optional allows orElseThrow in service and prevents null pointer exception
 
-    User getUserByUserId(long id);
+    Optional<User> findByUserId(long id);
 
     boolean existsByUserName(String userName);
 }

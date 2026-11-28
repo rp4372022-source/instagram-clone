@@ -2,6 +2,9 @@ package com.meta.instagram.user;
 
 import com.meta.instagram.user.dto.UserProfileResponse;
 import com.meta.instagram.user.dto.UserRegisterRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +22,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<HttpStatus> addUser(@RequestBody UserRegisterRequest userRegisterRequest){
-        System.out.println(userRegisterRequest.toString());
+    public ResponseEntity<HttpStatus> addUser(@Valid @RequestBody UserRegisterRequest userRegisterRequest){
         try{
             userService.add(userRegisterRequest);
             return new ResponseEntity<>(HttpStatus.CREATED);
@@ -31,9 +33,9 @@ public class UserController {
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<UserProfileResponse> getUserProfileResponse(@PathVariable long id){
+    public ResponseEntity<UserProfileResponse> get(@NotNull @Positive @PathVariable long id){
         try{
-            return new ResponseEntity<>(userService.getUserProfile(id), HttpStatus.OK);
+            return new ResponseEntity<>(userService.get(id), HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
         }
